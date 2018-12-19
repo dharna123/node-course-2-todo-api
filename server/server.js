@@ -10,6 +10,9 @@ var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
+var{authenticate}=require('./middleware/authenticate');
+//var {authenticate}=require('./middleware/authenticate');
+
 var app = express();
 const port=process.env.PORT;
 
@@ -76,6 +79,8 @@ app.get('/todos/:id', (req, res) => {
        
    })
 
+
+
 app.patch('/todos/:id',(req,res) => {
     var id=req.params.id;
    var body= _.pick(req.body,['text','completed']); 
@@ -100,6 +105,9 @@ res.send({todo});
 })
 
 
+
+
+
 // POST /users
 
 app.post('/users', (req,res) => {
@@ -116,9 +124,18 @@ user.save().then(() => {
     res.status(400).send(e);
 })
 })
+
+
+
+app.get('/users/me', authenticate,(req,res) => {
+    res.send(req.user);
+    
+})
+
+
 app.listen(port, () => {
     console.log(`Started up at port ${port}`);
   });
 
 
-//module.exports = {app};
+module.exports = {app};
